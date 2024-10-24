@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    
+    <section id="gallery">
+        <h2 class="section-title">Gallery</h2>
+        <div class="gallery-grid">
+            {% for image in images %}
+                <div class="gallery-item">
+                    <img src="{{ url_for('static', filename='uploads/' + image) }}" alt="gallery">
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <div class="upload-section">
+        <h2 class="section-title">Upload Photo</h2>
+        <a href="{{ url_for('upload') }}" class="btn">Choose image</a>
+    </div>
+
+{% endblock %}

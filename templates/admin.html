@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <section class="admin-section">
+        <h2 class="section-title">管理员审核</h2>
+        
+        <div class="admin-grid">
+            <div class="admin-header">
+                <div class="header-item">文件名</div>
+                <div class="header-item">地点</div>
+                <div class="header-item">名字</div>
+                <div class="header-item">图像</div>
+                <div class="header-item">操作</div>
+            </div>
+
+            {% for image in images %}
+            <div class="admin-row">
+                <div class="admin-cell">{{ image[1] }}</div>
+                <div class="admin-cell">{{ image[2] }}</div>
+                <div class="admin-cell">{{ image[3] }}</div>
+                <div class="admin-cell">
+                    <img src="{{ url_for('static', filename='uploads/' + image[1]) }}" 
+                         alt="预览图" 
+                         class="preview-image"
+                         onclick="openModal('{{ url_for('static', filename='uploads/' + image[1]) }}')">
+                </div>
+                <div class="admin-cell">
+                    {% if image[4] == 0 %}
+                        <a href="{{ url_for('approve', image_id=image[0]) }}" class="btn approve-btn">通过</a>
+                    {% else %}
+                        <span class="approved-tag">已通过</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Modal -->
+    <div id="imageModal" class="modal">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <div class="modal-content">
+            <img id="modalImage" src="" alt="大图预览">
+        </div>
+    </div>
+
+    <style>
+        .admin-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .admin-grid {
+            margin-top: 2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .admin-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 2fr 1fr;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 500;
+        }
+
+        .admin-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 2fr 1fr;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+        }
+
+        .admin-row:last-child {
+            border-bottom: none;
+        }
+
+        .preview-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .preview-image:hover {
+            transform: scale(1.05);
+        }
+
+        .approve-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .approved-tag {
+            color: #2ecc71;
+            font-size: 0.9rem;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1100;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            margin: 2rem auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 2rem;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 1101;
+        }
+
+        @media (max-width: 768px) {
+            .admin-header, .admin-row {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .header-item:not(:first-child) {
+                display: none;
+            }
+
+            .admin-cell {
+                padding: 0.5rem 0;
+            }
+
+            .preview-image {
+                width: 80px;
+                height: 80px;
+            }
+        }
+    </style>
+
+    <script>
+        function openModal(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = 'block';
+            modalImg.src = imageSrc;
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('imageModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+{% endblock %}
