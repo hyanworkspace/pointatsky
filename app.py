@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import os
 import sqlite3
+import shutil
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/uploads/'
@@ -18,6 +19,7 @@ def init_db():
             )
         ''')
 init_db()
+
 
 @app.route('/')
 def index():
@@ -56,6 +58,21 @@ def approve(image_id):
     with sqlite3.connect('uploads.db') as conn:
         conn.execute('UPDATE images SET approved = 1 WHERE id = ?', (image_id,))
     return redirect(url_for('admin'))
+
+@app.route('/backup_db', methods=['POST'])
+def backup_db():
+    # 备份数据库
+    if os.path.exists('uploads.db'):
+        shutil.copy('uploads.db', 'uploads_backup.db')  # 备份数据库
+        return "数据库已备份"
+    return "数据库不存在", 404
+
+@app.route('/clear_db', methods=['POST'])
+def clear_db():
+    # 清空数据库
+    with sqlite3.connect('uploads.db') as conn:
+        conn.execute('DELETE FROM images;')  # 清空表
+    return "数据库已清空"
 
 if __name__ == '__main__':
     app.run(debug=True)

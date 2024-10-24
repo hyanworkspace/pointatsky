@@ -34,6 +34,14 @@
             </div>
             {% endfor %}
         </div>
+        <div class="button-container">
+            <form action="{{ url_for('backup_db') }}" method="post">
+                <button type="submit">备份数据库</button>
+            </form>
+            <form action="{{ url_for('clear_db') }}" method="post" onsubmit="return confirm('你确定要清空数据库吗？');">
+                <button type="submit">清空数据库</button>
+            </form>
+        </div>
     </section>
 
     <!-- Modal -->
